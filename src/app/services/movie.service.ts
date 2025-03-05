@@ -1,6 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
-import { catchError, EMPTY, Observable, of, switchMap } from 'rxjs';
+import { catchError, EMPTY, Observable, of } from 'rxjs';
+import { OMDbSearchResponse } from '../interfaces/movie.interface';
 
 @Injectable({
   providedIn: 'root',
@@ -11,17 +12,13 @@ export class MovieService {
 
   private readonly _http = inject(HttpClient);
 
-  public searchMovies(searchKey: string): Observable<any> {
+  public searchMovies(searchKey: string): Observable<OMDbSearchResponse> {
     if (!searchKey) {
-      return of([]);
+      return of();
     }
 
     const url = `${this.baseUrl}?apikey=${this.apiKey}&s=${searchKey}`;
-    return this._http.get<any>(url).pipe(
-      switchMap((response) => {
-        console.warn('response', response);
-        return response;
-      }),
+    return this._http.get<OMDbSearchResponse>(url).pipe(
       catchError((error) => {
         console.warn('Search movies error: ', error);
         return EMPTY;
