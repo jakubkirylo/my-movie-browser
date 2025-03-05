@@ -1,7 +1,10 @@
 import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
-import { catchError, EMPTY, Observable, of } from 'rxjs';
-import { OMDbSearchResponse } from '../interfaces/movie.interface';
+import { catchError, Observable, of } from 'rxjs';
+import {
+  OMDbMovieDetail,
+  OMDbSearchResponse,
+} from '../interfaces/movie.interface';
 
 @Injectable({
   providedIn: 'root',
@@ -15,16 +18,22 @@ export class MovieService {
   public searchMovies(
     searchKey: string | null,
     page: number
-  ): Observable<OMDbSearchResponse> {
-    if (!searchKey) {
-      return EMPTY;
-    }
-
+  ): Observable<OMDbSearchResponse | null> {
     const url = `${this.baseUrl}?apikey=${this.apiKey}&s=${searchKey}&page=${page}`;
     return this._http.get<OMDbSearchResponse>(url).pipe(
       catchError((error) => {
         console.warn('Search movies error: ', error);
-        return EMPTY;
+        return of(null);
+      })
+    );
+  }
+
+  public fetchMovieDetails(imdbId: string): Observable<OMDbMovieDetail | null> {
+    const url = `${this.baseUrl}?apikey=${this.apiKey}&i=${imdbId}`;
+    return this._http.get<OMDbMovieDetail>(url).pipe(
+      catchError((error) => {
+        console.warn('Fetch movie details error: ', error);
+        return of(null);
       })
     );
   }

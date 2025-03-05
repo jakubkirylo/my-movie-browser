@@ -5,12 +5,20 @@ import {
   signal,
 } from '@angular/core';
 import { MovieService } from '../services/movie.service';
-import { OMDbSearchResult } from '../interfaces/movie.interface';
+import {
+  OMDbMovieDetail,
+  OMDbSearchResponse,
+} from '../interfaces/movie.interface';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import {
   combineLatest,
   debounceTime,
   distinctUntilChanged,
+  filter,
+  forkJoin,
+  map,
+  Observable,
+  of,
   switchMap,
   tap,
 } from 'rxjs';
@@ -50,7 +58,7 @@ export class SearchMovieComponent {
 
   public searchControl = new FormControl('');
   public readonly loading = signal(false);
-  public readonly movies = signal<OMDbSearchResult[]>([]);
+  public readonly movies = signal<OMDbMovieDetail[]>([]);
   public readonly totalResults = signal(0);
   public readonly pageIndex = signal(0);
 
@@ -84,16 +92,43 @@ export class SearchMovieComponent {
         debounceTime(500),
         distinctUntilChanged(),
         takeUntilDestroyed(),
-        switchMap(([value, pageIndex]) => {
-          this.loading.set(true);
-          return this._movieService.searchMovies(value, pageIndex + 1);
+        tap(() => this.loading.set(true)),
+        filter(([value, _]) => !!value),
+        switchMap(([value, pageIndex]) =>
+          this._movieService.searchMovies(value, pageIndex + 1)
+        ),
+        switchMap((response): Observable<OMDbSearchResponse> => {
+          if (
+            response !== null &&
+            response.Response === 'True' &&
+            response.Search &&
+            response.Search.length > 0
+          ) {
+            return forkJoin(
+              response?.Search?.map((movie) =>
+                movie.imdbID
+                  ? this._movieService
+                      .fetchMovieDetails(movie.imdbID)
+                      .pipe(map((detail) => (detail ? detail : movie)))
+                  : of(movie as OMDbMovieDetail)
+              )
+            ).pipe(
+              map((detailedMovies) => {
+                return {
+                  ...response,
+                  Search: detailedMovies,
+                };
+              })
+            );
+          }
+          return of(response as OMDbMovieDetail);
         })
       )
       .subscribe((response) => {
-        if (response.Response === 'True') {
+        if (response?.Response === 'True') {
           if (response.Search !== undefined) {
             this.loading.set(false);
-            this.movies.set(response.Search);
+            this.movies.set(response.Search as OMDbMovieDetail[]);
             this.totalResults.set(Number(response.totalResults));
           }
         } else {
