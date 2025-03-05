@@ -1,15 +1,24 @@
 @use "tailwindcss";
-html, body { height: 100%; }
-body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+@use '@angular/material' as mat;
+
+@include mat.core();
+
+html, body {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  font-family: Roboto, "Helvetica Neue", sans-serif;
+}
 
 .cdk-drag-preview {
-    @apply box-border rounded shadow-md;
-    @apply bg-white;
-    @apply px-2.5;
-    @apply shadow-xl;
-  }
-  
-  .cdk-drag-animating {
-    @apply transition-transform duration-300 ease-in-out;
-  }
-  
+  @apply box-border rounded shadow-md;
+  @apply bg-white;
+  @apply px-2.5;
+  @apply shadow-xl;
+}
+
+.cdk-drag-animating {
+  @apply transition-transform duration-300 ease-in-out;
+}
