@@ -1,0 +1,32 @@
+<div class="block p-2">
+    <input type="text" [formControl]="searchControl"
+        placeholder="Search movie (title, description, year, director, genre)..."
+        class="w-full p-2 border rounded mb-4" />
+    @if(!loading() && movies().length > 0){
+    <div class="overflow-auto">
+        <div class="flex flex-col">
+            @for (item of movies(); track item.imdbID) {
+            <div class="flex border-b">
+                @for (header of headers; track header.label) {
+                <div class="flex-1 p-2">
+                    <ng-container [ngSwitch]="header.field">
+                        <div *ngSwitchCase="'Poster'">
+                            @if(item.Poster !== 'N/A'){
+                            <img [src]="item.Poster" alt="Poster" class="w-12 h-auto" />
+                            } @else {
+                            <!-- TODO: icon for missing poster -->
+                            }
+                        </div>
+                        <span *ngSwitchCase="'Title'">{{ item.Title }}</span>
+                        <span *ngSwitchCase="'Year'">{{ item.Year }}</span>
+                    </ng-container>
+                </div>
+                }
+            </div>
+            }
+        </div>
+    </div>
+    } @if(movies().length === 0){
+    <p>No results</p>
+    }
+</div>

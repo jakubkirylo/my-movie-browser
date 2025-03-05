@@ -12,9 +12,11 @@ export class MovieService {
 
   private readonly _http = inject(HttpClient);
 
-  public searchMovies(searchKey: string): Observable<OMDbSearchResponse> {
+  public searchMovies(
+    searchKey: string | null
+  ): Observable<OMDbSearchResponse> {
     if (!searchKey) {
-      return of();
+      return EMPTY;
     }
 
     const url = `${this.baseUrl}?apikey=${this.apiKey}&s=${searchKey}`;
