@@ -27,6 +27,7 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
 import { MatInputModule } from '@angular/material/input';
 import { MatSortModule, Sort } from '@angular/material/sort';
+import { MatIconModule } from '@angular/material/icon';
 
 @Component({
   selector: 'app-search-movie',
@@ -39,6 +40,7 @@ import { MatSortModule, Sort } from '@angular/material/sort';
     MatPaginatorModule,
     MatInputModule,
     MatSortModule,
+    MatIconModule,
   ],
   templateUrl: './search-movie.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,

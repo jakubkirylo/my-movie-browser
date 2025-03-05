@@ -27,7 +27,7 @@
                             @if(item.Poster !== 'N/A'){
                             <img [src]="item.Poster" class="w-10 h-auto p-1" />
                             } @else {
-                            <!-- TODO: icon for missing poster -->
+                            <mat-icon fontIcon="no_photography"></mat-icon>
                             }
                         </div>
                         <span *ngSwitchCase="'Title'">{{ item.Title }}</span>
