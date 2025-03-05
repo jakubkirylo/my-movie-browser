@@ -25,6 +25,8 @@ import {
 } from '@angular/cdk/drag-drop';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
+import { MatInputModule } from '@angular/material/input';
+import { MatSortModule, Sort } from '@angular/material/sort';
 
 @Component({
   selector: 'app-search-movie',
@@ -35,6 +37,8 @@ import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
     CdkDropList,
     MatProgressSpinnerModule,
     MatPaginatorModule,
+    MatInputModule,
+    MatSortModule,
   ],
   templateUrl: './search-movie.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -101,8 +105,9 @@ export class SearchMovieComponent {
     moveItemInArray(this.headers, event.previousIndex, event.currentIndex);
   }
 
-  public sortData(field: string): void {
+  public sortData(sort: Sort): void {
     // TODO: implement sorting data
+    console.warn('sort data', sort);
   }
 
   public handlePageEvent(ev: PageEvent): void {

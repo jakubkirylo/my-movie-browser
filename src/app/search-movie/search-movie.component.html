@@ -1,14 +1,16 @@
 <div class="block p-2">
-    <input type="text" [formControl]="searchControl"
-        placeholder="Search movie (title, description, year, director, genre)..."
-        class="w-full p-2 border rounded mb-4" />
+    <mat-form-field appearance="fill" class="w-full mb-4" subscriptSizing="dynamic">
+        <input matInput type="text" [formControl]="searchControl"
+            placeholder="Search movie (title, description, year, director, genre)..." />
+    </mat-form-field>
     @if(!loading() && movies().length > 0){
     <div class="overflow-auto">
         <div class="flex flex-col">
-            <div cdkDropList cdkDropListOrientation="horizontal" (cdkDropListDropped)="drop($event)"
-                class="max-w-full border border-gray-300 min-h-[60px] flex bg-white rounded overflow-hidden">
+            <div matSort cdkDropList cdkDropListOrientation="horizontal" (cdkDropListDropped)="drop($event)"
+                (matSortChange)="sortData($event)"
+                class="max-w-full border border-gray-300 h-[50px] flex bg-white rounded overflow-hidden">
                 @for (header of headers; track $index; let i = $index) {
-                <div cdkDrag
+                <div cdkDrag [mat-sort-header]="header.label"
                     class="flex-1 py-5 px-2.5 border-r border-gray-300 last:border-0 text-gray-900 flex items-center justify-between cursor-move bg-white text-sm">
                     <span>{{ header.label }}</span>
                 </div>
