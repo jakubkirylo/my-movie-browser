@@ -1,29 +1,31 @@
+@let moviesLength = movies().length;
+
 <div class="block p-2">
     <mat-form-field appearance="fill" class="w-full mb-4" subscriptSizing="dynamic">
         <input matInput type="text" [formControl]="searchControl"
             placeholder="Search movie (title, description, year, director, genre)..." />
     </mat-form-field>
-    @if(!loading() && movies().length > 0){
-    <div class="overflow-auto">
+    @if(!loading() && moviesLength > 0){
+    <div class="overflow-auto border border-gray-300 rounded">
         <div class="flex flex-col">
             <div matSort cdkDropList cdkDropListOrientation="horizontal" (cdkDropListDropped)="drop($event)"
                 (matSortChange)="sortData($event)"
-                class="max-w-full border border-gray-300 h-[50px] flex bg-white rounded overflow-hidden">
+                class="max-w-full h-[50px] flex bg-white overflow-hidden border-b border-gray-300">
                 @for (header of headers; track $index; let i = $index) {
                 <div cdkDrag [mat-sort-header]="header.label"
-                    class="flex-1 py-5 px-2.5 border-r border-gray-300 last:border-0 text-gray-900 flex items-center justify-between cursor-move bg-white text-sm">
+                    class="flex-1 px-2.5 text-gray-900 flex items-center justify-between cursor-move bg-white text-sm">
                     <span>{{ header.label }}</span>
                 </div>
                 }
             </div>
             @for (item of movies(); track item.imdbID) {
-            <div class="flex border-b">
+            <div class="flex max-w-full h-[60px] bg-white overflow-hidden border-gray-300 border-b">
                 @for (header of headers; track header.label) {
-                <div class="flex-1 p-2">
+                <div class="flex-1 py-5 px-2.5 text-gray-900 flex items-center justify-between text-sm">
                     <ng-container [ngSwitch]="header.field">
                         <div *ngSwitchCase="'Poster'">
                             @if(item.Poster !== 'N/A'){
-                            <img [src]="item.Poster" alt="Poster" class="w-12 h-auto" />
+                            <img [src]="item.Poster" class="w-10 h-auto p-1" />
                             } @else {
                             <!-- TODO: icon for missing poster -->
                             }
@@ -42,10 +44,10 @@
     </div>
     }
     @if(loading()){
-    <mat-spinner></mat-spinner>
+    <div class="flex justify-center"><mat-spinner></mat-spinner></div>
     }
 
-    @if(!loading() && movies().length === 0){
-    <p>No results</p>
+    @if(!loading() && moviesLength === 0){
+    <div class="flex justify-center">No results</div>
     }
 </div>
