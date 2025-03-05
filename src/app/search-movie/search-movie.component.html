@@ -34,8 +34,16 @@
             </div>
             }
         </div>
+        <mat-paginator [length]="totalResults()" [pageSize]="10" [pageIndex]="pageIndex()"
+            (page)="handlePageEvent($event)">
+        </mat-paginator>
     </div>
-    } @if(movies().length === 0){
+    }
+    @if(loading()){
+    <mat-spinner></mat-spinner>
+    }
+
+    @if(!loading() && movies().length === 0){
     <p>No results</p>
     }
 </div>

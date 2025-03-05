@@ -13,13 +13,14 @@ export class MovieService {
   private readonly _http = inject(HttpClient);
 
   public searchMovies(
-    searchKey: string | null
+    searchKey: string | null,
+    page: number
   ): Observable<OMDbSearchResponse> {
     if (!searchKey) {
       return EMPTY;
     }
 
-    const url = `${this.baseUrl}?apikey=${this.apiKey}&s=${searchKey}`;
+    const url = `${this.baseUrl}?apikey=${this.apiKey}&s=${searchKey}&page=${page}`;
     return this._http.get<OMDbSearchResponse>(url).pipe(
       catchError((error) => {
         console.warn('Search movies error: ', error);
