@@ -11,10 +11,16 @@ import { debounceTime, distinctUntilChanged, switchMap } from 'rxjs';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { CommonModule } from '@angular/common';
 import { TableHeaders } from '../interfaces/table.interfaces';
+import {
+  CdkDrag,
+  CdkDragDrop,
+  CdkDropList,
+  moveItemInArray,
+} from '@angular/cdk/drag-drop';
 
 @Component({
   selector: 'app-search-movie',
-  imports: [ReactiveFormsModule, CommonModule],
+  imports: [ReactiveFormsModule, CommonModule, CdkDrag, CdkDropList],
   templateUrl: './search-movie.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -54,5 +60,13 @@ export class SearchMovieComponent {
           }
         }
       });
+  }
+
+  public drop(event: CdkDragDrop<string[]>): void {
+    moveItemInArray(this.headers, event.previousIndex, event.currentIndex);
+  }
+
+  public sortData(field: string): void {
+    // TODO: implement sorting data
   }
 }

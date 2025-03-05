@@ -5,6 +5,15 @@
     @if(!loading() && movies().length > 0){
     <div class="overflow-auto">
         <div class="flex flex-col">
+            <div cdkDropList cdkDropListOrientation="horizontal" (cdkDropListDropped)="drop($event)"
+                class="max-w-full border border-gray-300 min-h-[60px] flex bg-white rounded overflow-hidden">
+                @for (header of headers; track $index; let i = $index) {
+                <div cdkDrag
+                    class="flex-1 py-5 px-2.5 border-r border-gray-300 last:border-0 text-gray-900 flex items-center justify-between cursor-move bg-white text-sm">
+                    <span>{{ header.label }}</span>
+                </div>
+                }
+            </div>
             @for (item of movies(); track item.imdbID) {
             <div class="flex border-b">
                 @for (header of headers; track header.label) {
