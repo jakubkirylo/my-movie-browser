@@ -1,0 +1,31 @@
+{
+  "trailingComma": "es5",
+  "tabWidth": 4,
+  "printWidth": 80,
+  "semi": true,
+  "quoteProps": "preserve",
+  "singleQuote": true,
+  "arrowParens": "avoid",
+  "overrides": [
+    {
+      "files": "*.json",
+      "options": {
+        "tabWidth": 2
+      }
+    },
+    {
+      "files": ["*.css", "*.scss"],
+      "options": {
+        "singleQuote": false
+      }
+    },
+    {
+      "files": ["*.html"],
+      "options": {
+        "singleQuote": false,
+        "tabWidth": 2
+      }
+    }
+  ],
+  "plugins": ["prettier-plugin-organize-imports", "prettier-plugin-tailwindcss"]
+}

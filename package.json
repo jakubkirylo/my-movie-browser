@@ -7,7 +7,8 @@
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
-    "serve:ssr:my-movie-browser": "node dist/my-movie-browser/server/server.mjs"
+    "serve:ssr:my-movie-browser": "node dist/my-movie-browser/server/server.mjs",
+    "format": "prettier --write --end-of-line auto ./src"
   },
   "private": true,
   "dependencies": {
@@ -43,6 +44,9 @@
     "karma-coverage": "~2.2.0",
     "karma-jasmine": "~5.1.0",
     "karma-jasmine-html-reporter": "~2.1.0",
+    "prettier": "^3.5.3",
+    "prettier-plugin-organize-imports": "^4.1.0",
+    "prettier-plugin-tailwindcss": "^0.6.11",
     "typescript": "~5.7.2"
   }
 }

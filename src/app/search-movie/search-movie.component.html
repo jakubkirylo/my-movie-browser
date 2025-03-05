@@ -1,57 +1,81 @@
 @let moviesLength = movies().length;
 
 <div class="block p-2">
-    <mat-form-field appearance="fill" class="w-full mb-4" subscriptSizing="dynamic">
-        <input matInput type="text" [formControl]="searchControl"
-            placeholder="Search movie (title, description, year, director, genre)..." />
-    </mat-form-field>
-    @if(!loading() && moviesLength > 0){
-    <div class="overflow-auto border border-gray-300 rounded">
-        <div class="flex flex-col">
-            <div matSort cdkDropList cdkDropListOrientation="horizontal" (cdkDropListDropped)="drop($event)"
-                (matSortChange)="sortData($event)"
-                class="max-w-full h-[50px] flex bg-white overflow-hidden border-b border-gray-300">
-                @for (header of headers; track $index; let i = $index) {
-                <div cdkDrag [mat-sort-header]="header.label"
-                    class="flex-1 px-2.5 text-gray-900 flex items-center justify-between cursor-move bg-white text-sm">
-                    <span>{{ header.label }}</span>
-                </div>
-                }
+  <mat-form-field
+    appearance="fill"
+    class="mb-4 w-full"
+    subscriptSizing="dynamic"
+  >
+    <input
+      matInput
+      type="text"
+      [formControl]="searchControl"
+      placeholder="Search movie (title, description, year, director, genre)..."
+    />
+  </mat-form-field>
+  @if (!loading() && moviesLength > 0) {
+    <div class="overflow-auto rounded border border-gray-300">
+      <div class="flex flex-col">
+        <div
+          matSort
+          cdkDropList
+          cdkDropListOrientation="horizontal"
+          (cdkDropListDropped)="drop($event)"
+          (matSortChange)="sortData($event)"
+          class="flex h-[50px] max-w-full overflow-hidden border-b border-gray-300 bg-white"
+        >
+          @for (header of headers; track $index; let i = $index) {
+            <div
+              cdkDrag
+              [mat-sort-header]="header.label"
+              class="flex flex-1 cursor-move items-center justify-between bg-white px-2.5 text-sm text-gray-900"
+            >
+              <span>{{ header.label }}</span>
             </div>
-            @for (item of movies(); track item.imdbID) {
-            <div class="flex max-w-full h-[60px] bg-white overflow-hidden border-gray-300 border-b">
-                @for (header of headers; track header.label) {
-                <div class="flex-1 py-5 px-2.5 text-gray-900 flex items-center justify-between text-sm">
-                    <ng-container [ngSwitch]="header.field">
-                        <div *ngSwitchCase="'Poster'">
-                            @if(item.Poster !== 'N/A'){
-                            <img [src]="item.Poster" class="w-10 h-auto p-1" />
-                            } @else {
-                            <mat-icon fontIcon="no_photography"></mat-icon>
-                            }
-                        </div>
-                        <span *ngSwitchCase="'Title'">{{ item.Title }}</span>
-                        <span *ngSwitchCase="'Year'">{{ item.Year }}</span>
-                        <span *ngSwitchCase="'Runtime'">{{ item.Runtime }}</span>
-                        <span *ngSwitchCase="'Genre'">{{ item.Genre }}</span>
-                        <span *ngSwitchCase="'Director'">{{ item.Director }}</span>
-                        <span *ngSwitchCase="'Plot'">{{ item.Plot }}</span>
-                    </ng-container>
-                </div>
-                }
-            </div>
-            }
+          }
         </div>
-        <mat-paginator [length]="totalResults()" [pageSize]="10" [pageIndex]="pageIndex()"
-            (page)="handlePageEvent($event)">
-        </mat-paginator>
+        @for (item of movies(); track item.imdbID) {
+          <div
+            class="flex h-[60px] max-w-full overflow-hidden border-b border-gray-300 bg-white"
+          >
+            @for (header of headers; track header.label) {
+              <div
+                class="flex flex-1 items-center justify-between px-2.5 py-5 text-sm text-gray-900"
+              >
+                <ng-container [ngSwitch]="header.field">
+                  <div *ngSwitchCase="'Poster'">
+                    @if (item.Poster !== "N/A") {
+                      <img [src]="item.Poster" class="h-auto w-10 p-1" />
+                    } @else {
+                      <mat-icon fontIcon="no_photography"></mat-icon>
+                    }
+                  </div>
+                  <span *ngSwitchCase="'Title'">{{ item.Title }}</span>
+                  <span *ngSwitchCase="'Year'">{{ item.Year }}</span>
+                  <span *ngSwitchCase="'Runtime'">{{ item.Runtime }}</span>
+                  <span *ngSwitchCase="'Genre'">{{ item.Genre }}</span>
+                  <span *ngSwitchCase="'Director'">{{ item.Director }}</span>
+                  <span *ngSwitchCase="'Plot'">{{ item.Plot }}</span>
+                </ng-container>
+              </div>
+            }
+          </div>
+        }
+      </div>
+      <mat-paginator
+        [length]="totalResults()"
+        [pageSize]="10"
+        [pageIndex]="pageIndex()"
+        (page)="handlePageEvent($event)"
+      >
+      </mat-paginator>
     </div>
-    }
-    @if(loading()){
+  }
+  @if (loading()) {
     <div class="flex justify-center"><mat-spinner></mat-spinner></div>
-    }
+  }
 
-    @if(!loading() && moviesLength === 0){
+  @if (!loading() && moviesLength === 0) {
     <div class="flex justify-center">No results</div>
-    }
+  }
 </div>
