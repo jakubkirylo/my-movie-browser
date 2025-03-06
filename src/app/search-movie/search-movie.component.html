@@ -12,6 +12,16 @@
       [formControl]="searchControl"
       placeholder="Search movie (title, description, year, director, genre)..."
     />
+    @if (searchControl.value) {
+      <button
+        matSuffix
+        mat-icon-button
+        aria-label="Clear"
+        (click)="resetSearch()"
+      >
+        <mat-icon>close</mat-icon>
+      </button>
+    }
   </mat-form-field>
 
   @if (!loading() && moviesLength > 0) {

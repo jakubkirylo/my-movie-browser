@@ -108,8 +108,8 @@ export class SearchMovieComponent implements OnInit {
                 debounceTime(500),
                 distinctUntilChanged(),
                 takeUntil(this.ngUnsubscribe),
-                tap(() => this.loading.set(true)),
                 filter(([value, _]) => !!value),
+                tap(() => this.loading.set(true)),
                 switchMap(([value, pageIndex]) =>
                     this._movieService.searchMovies(value, pageIndex + 1)
                 ),
@@ -171,6 +171,11 @@ export class SearchMovieComponent implements OnInit {
 
     public handlePageEvent(ev: PageEvent): void {
         this.pageIndex.set(ev.pageIndex);
+    }
+
+    public resetSearch(): void {
+        this.searchControl.reset();
+        this.movies.set([]);
     }
 
     private processResponse(
