@@ -9,9 +9,10 @@ import {
     ChangeDetectionStrategy,
     Component,
     inject,
+    OnInit,
     signal,
 } from '@angular/core';
-import { takeUntilDestroyed, toObservable } from '@angular/core/rxjs-interop';
+import { toObservable } from '@angular/core/rxjs-interop';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
@@ -27,7 +28,9 @@ import {
     map,
     Observable,
     of,
+    Subject,
     switchMap,
+    takeUntil,
     tap,
 } from 'rxjs';
 import {
@@ -53,7 +56,7 @@ import { MovieService } from '../services/movie.service';
     templateUrl: './search-movie.component.html',
     changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class SearchMovieComponent {
+export class SearchMovieComponent implements OnInit {
     private readonly _movieService = inject(MovieService);
 
     public searchControl = new FormControl('');
@@ -61,6 +64,7 @@ export class SearchMovieComponent {
     public readonly movies = signal<OMDbMovieDetail[]>([]);
     public readonly totalResults = signal(0);
     public readonly pageIndex = signal(0);
+    public readonly pageIndex$ = toObservable(this.pageIndex);
 
     public readonly headers: TableHeaders[] = [
         {
@@ -83,7 +87,9 @@ export class SearchMovieComponent {
     private sortColumn: string = '';
     private sortDirection: 'asc' | 'desc' = 'asc';
 
-    constructor() {
+    private readonly ngUnsubscribe = new Subject();
+
+    ngOnInit(): void {
         this.searchControl.valueChanges
             .pipe(
                 tap(() => {
@@ -91,53 +97,24 @@ export class SearchMovieComponent {
                         this.pageIndex.set(0);
                     }
                 }),
-                takeUntilDestroyed()
+                takeUntil(this.ngUnsubscribe)
             )
             .subscribe();
 
-        combineLatest([
-            this.searchControl.valueChanges,
-            toObservable(this.pageIndex),
-        ])
+        combineLatest([this.searchControl.valueChanges, this.pageIndex$])
             .pipe(
                 debounceTime(500),
                 distinctUntilChanged(),
-                takeUntilDestroyed(),
+                takeUntil(this.ngUnsubscribe),
                 tap(() => this.loading.set(true)),
                 filter(([value, _]) => !!value),
                 switchMap(([value, pageIndex]) =>
                     this._movieService.searchMovies(value, pageIndex + 1)
                 ),
-                switchMap((response): Observable<OMDbSearchResponse> => {
-                    if (
-                        response !== null &&
-                        response.Response === 'True' &&
-                        response.Search &&
-                        response.Search.length > 0
-                    ) {
-                        return forkJoin(
-                            response?.Search?.map(movie =>
-                                movie.imdbID
-                                    ? this._movieService
-                                          .fetchMovieDetails(movie.imdbID)
-                                          .pipe(
-                                              map(detail =>
-                                                  detail ? detail : movie
-                                              )
-                                          )
-                                    : of(movie as OMDbMovieDetail)
-                            )
-                        ).pipe(
-                            map(detailedMovies => {
-                                return {
-                                    ...response,
-                                    Search: detailedMovies,
-                                };
-                            })
-                        );
-                    }
-                    return of(response as OMDbMovieDetail);
-                })
+                switchMap(
+                    (response): Observable<OMDbSearchResponse> =>
+                        this.processResponse(response)
+                )
             )
             .subscribe(response => {
                 if (response?.Response === 'True') {
@@ -192,5 +169,34 @@ export class SearchMovieComponent {
 
     public handlePageEvent(ev: PageEvent): void {
         this.pageIndex.set(ev.pageIndex);
+    }
+
+    private processResponse(
+        response: OMDbSearchResponse | null
+    ): Observable<OMDbSearchResponse> {
+        if (
+            response !== null &&
+            response.Response === 'True' &&
+            response.Search &&
+            response.Search.length > 0
+        ) {
+            return forkJoin(
+                response?.Search?.map(movie =>
+                    movie.imdbID
+                        ? this._movieService
+                              .fetchMovieDetails(movie.imdbID)
+                              .pipe(map(detail => (detail ? detail : movie)))
+                        : of(movie as OMDbMovieDetail)
+                )
+            ).pipe(
+                map(detailedMovies => {
+                    return {
+                        ...response,
+                        Search: detailedMovies,
+                    };
+                })
+            );
+        }
+        return of(response as OMDbMovieDetail);
     }
 }
