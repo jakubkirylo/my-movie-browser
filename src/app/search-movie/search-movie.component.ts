@@ -19,6 +19,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSortModule, Sort } from '@angular/material/sort';
+import { MatTooltipModule } from '@angular/material/tooltip';
 import {
     combineLatest,
     debounceTime,
@@ -52,6 +53,7 @@ import { MovieService } from '../services/movie.service';
         MatInputModule,
         MatSortModule,
         MatIconModule,
+        MatTooltipModule,
     ],
     templateUrl: './search-movie.component.html',
     changeDetection: ChangeDetectionStrategy.OnPush,

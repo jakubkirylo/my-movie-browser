@@ -65,9 +65,12 @@
                     <span *ngSwitchCase="'Director'" class="truncate">{{
                       item.Director
                     }}</span>
-                    <span *ngSwitchCase="'Plot'" class="line-clamp-3">{{
-                      item.Plot
-                    }}</span>
+                    <span
+                      *ngSwitchCase="'Plot'"
+                      class="line-clamp-3"
+                      [matTooltip]="item.Plot"
+                      >{{ item.Plot }}</span
+                    >
                   </ng-container>
                 </div>
               }
