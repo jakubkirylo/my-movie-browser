@@ -63,14 +63,25 @@ export class SearchMovieComponent {
     public readonly pageIndex = signal(0);
 
     public readonly headers: TableHeaders[] = [
-        { label: 'Poster', field: 'Poster' },
-        { label: 'Title', field: 'Title' },
-        { label: 'Year', field: 'Year' },
-        { label: 'Runtime', field: 'Runtime' },
-        { label: 'Genre', field: 'Genre' },
-        { label: 'Director', field: 'Director' },
-        { label: 'Plot', field: 'Plot' },
+        {
+            label: 'Poster',
+            field: 'Poster',
+            style: 'hidden sm:flex sm:w-16 md:w-20',
+        },
+        {
+            label: 'Title',
+            field: 'Title',
+            style: 'w-40 sm:w-48 md:w-56 lg:w-64',
+        },
+        { label: 'Year', field: 'Year', style: 'w-16 sm:w-20 md:w-24' },
+        { label: 'Runtime', field: 'Runtime', style: 'w-16 sm:w-20 md:w-24' },
+        { label: 'Genre', field: 'Genre', style: 'w-32 sm:w-40 md:w-48' },
+        { label: 'Director', field: 'Director', style: 'w-32 sm:w-40 md:w-48' },
+        { label: 'Plot', field: 'Plot', style: 'min-w-[500px] flex-1' },
     ];
+
+    private sortColumn: string = '';
+    private sortDirection: 'asc' | 'desc' = 'asc';
 
     constructor() {
         this.searchControl.valueChanges
@@ -149,7 +160,34 @@ export class SearchMovieComponent {
     public sortData(sort: Sort): void {
         // TODO: OMDb API does not support data sorting, also does not allow to download all results at once - only paginated results
         // Possible solution: polling to get all data, save it in store, do the sorting/filtering on stored data
-        console.warn('sort data', sort);
+        // Sorting only on visible records
+
+        if (this.sortColumn === sort.active) {
+            this.sortDirection = this.sortDirection === 'asc' ? 'desc' : 'asc';
+        } else {
+            this.sortColumn = sort.active;
+            this.sortDirection = 'asc';
+        }
+
+        this.movies.set(
+            [...this.movies()].sort((a: any, b: any) => {
+                let aField: any = a[sort.active];
+                let bField: any = b[sort.active];
+
+                // Runtime comes as, eg. "49 min".
+                if (sort.active === 'Runtime') {
+                    aField = parseInt(aField?.replace(' min', ''), 10) || 0;
+                    bField = parseInt(bField?.replace(' min', ''), 10) || 0;
+                }
+
+                if (aField < bField) {
+                    return this.sortDirection === 'asc' ? -1 : 1;
+                } else if (aField > bField) {
+                    return this.sortDirection === 'asc' ? 1 : -1;
+                }
+                return 0;
+            })
+        );
     }
 
     public handlePageEvent(ev: PageEvent): void {

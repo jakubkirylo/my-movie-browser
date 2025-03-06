@@ -13,64 +13,78 @@
       placeholder="Search movie (title, description, year, director, genre)..."
     />
   </mat-form-field>
+
   @if (!loading() && moviesLength > 0) {
-    <div class="overflow-auto rounded border border-gray-300">
-      <div class="flex flex-col">
-        <div
-          matSort
-          cdkDropList
-          cdkDropListOrientation="horizontal"
-          (cdkDropListDropped)="drop($event)"
-          (matSortChange)="sortData($event)"
-          class="flex h-[50px] max-w-full overflow-hidden border-b border-gray-300 bg-white"
-        >
-          @for (header of headers; track $index; let i = $index) {
-            <div
-              cdkDrag
-              [mat-sort-header]="header.label"
-              class="flex flex-1 cursor-move items-center justify-between bg-white px-2.5 text-sm text-gray-900"
-            >
-              <span>{{ header.label }}</span>
-            </div>
-          }
-        </div>
-        @for (item of movies(); track item.imdbID) {
+    <div class="overflow-x-auto">
+      <div class="min-w-5xl rounded border border-gray-300 xl:min-w-md">
+        <div class="flex flex-col">
           <div
-            class="flex h-[60px] max-w-full overflow-hidden border-b border-gray-300 bg-white"
+            matSort
+            cdkDropList
+            cdkDropListOrientation="horizontal"
+            (cdkDropListDropped)="drop($event)"
+            (matSortChange)="sortData($event)"
+            class="flex h-[50px] max-w-full overflow-hidden border-b border-gray-300 bg-white"
           >
-            @for (header of headers; track header.label) {
+            @for (header of headers; track $index; let i = $index) {
               <div
-                class="flex flex-1 items-center justify-between px-2.5 py-5 text-sm text-gray-900"
+                cdkDrag
+                [mat-sort-header]="header.label"
+                class="flex cursor-move items-center justify-between bg-white px-2.5 text-sm text-gray-900"
+                [ngClass]="header.style"
               >
-                <ng-container [ngSwitch]="header.field">
-                  <div *ngSwitchCase="'Poster'">
-                    @if (item.Poster !== "N/A") {
-                      <img [src]="item.Poster" class="h-auto w-10 p-1" />
-                    } @else {
-                      <mat-icon fontIcon="no_photography"></mat-icon>
-                    }
-                  </div>
-                  <span *ngSwitchCase="'Title'">{{ item.Title }}</span>
-                  <span *ngSwitchCase="'Year'">{{ item.Year }}</span>
-                  <span *ngSwitchCase="'Runtime'">{{ item.Runtime }}</span>
-                  <span *ngSwitchCase="'Genre'">{{ item.Genre }}</span>
-                  <span *ngSwitchCase="'Director'">{{ item.Director }}</span>
-                  <span *ngSwitchCase="'Plot'">{{ item.Plot }}</span>
-                </ng-container>
+                <span>{{ header.label }}</span>
               </div>
             }
           </div>
-        }
+          @for (item of movies(); track item.imdbID) {
+            <div
+              class="flex h-[60px] max-w-full overflow-hidden border-b border-gray-300 bg-white"
+            >
+              @for (header of headers; track header.label) {
+                <div
+                  class="flex min-w-0 items-center justify-between px-2.5 py-5 text-sm text-gray-900"
+                  [ngClass]="header.style"
+                >
+                  <ng-container [ngSwitch]="header.field">
+                    <div *ngSwitchCase="'Poster'">
+                      @if (item.Poster !== "N/A") {
+                        <img [src]="item.Poster" class="h-auto w-10 p-1" />
+                      } @else {
+                        <mat-icon fontIcon="no_photography"></mat-icon>
+                      }
+                    </div>
+                    <span *ngSwitchCase="'Title'" class="line-clamp-3">{{
+                      item.Title
+                    }}</span>
+                    <span *ngSwitchCase="'Year'">{{ item.Year }}</span>
+                    <span *ngSwitchCase="'Runtime'">{{ item.Runtime }}</span>
+                    <span *ngSwitchCase="'Genre'" class="truncate">{{
+                      item.Genre
+                    }}</span>
+                    <span *ngSwitchCase="'Director'" class="truncate">{{
+                      item.Director
+                    }}</span>
+                    <span *ngSwitchCase="'Plot'" class="line-clamp-3">{{
+                      item.Plot
+                    }}</span>
+                  </ng-container>
+                </div>
+              }
+            </div>
+          }
+        </div>
+        <mat-paginator
+          [length]="totalResults()"
+          [pageSize]="10"
+          [pageIndex]="pageIndex()"
+          (page)="handlePageEvent($event)"
+        >
+        </mat-paginator>
       </div>
-      <mat-paginator
-        [length]="totalResults()"
-        [pageSize]="10"
-        [pageIndex]="pageIndex()"
-        (page)="handlePageEvent($event)"
-      >
-      </mat-paginator>
     </div>
   }
+
   @if (loading()) {
     <div class="flex justify-center"><mat-spinner></mat-spinner></div>
   }
