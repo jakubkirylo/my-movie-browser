@@ -1,4 +1,15 @@
 # MyMovieBrowser
+It's simple evaluation task for recruitment process. The goal was to create movie browser based on OMDb API.
+
+Requirements:
+1. Angular 19.2
+2. TailwindCSS
+3. Angular Materials allowed
+4. RWD
+5. Flexbox table
+6. Table interactions (change order of columns, sorting)
+
+Time: ~6 hrs
 
 This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 19.2.0.
 
